@@ -8,8 +8,6 @@ public class GenAiChatBotApplication {
 
 	public static void main(String[] args) {
 
-		System.out.println("OPENROUTER_API_KEY PRESENT: " +
-				(System.getenv("OPENROUTER_API_KEY") != null));
 		SpringApplication.run(GenAiChatBotApplication.class, args);
 	}
 
