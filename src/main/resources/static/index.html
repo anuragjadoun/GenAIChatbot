@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    >
+
+    <title>SummarizeAI</title>
+
+
+    <style>
+
+        /*
+           RESET
+        */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        :root {
+
+            --bg: #07090e;
+            --bg-soft: #0b0e15;
+
+            --card: rgba(16, 19, 29, .88);
+
+            --input: #080b11;
+
+            --border: rgba(255,255,255,.09);
+
+            --border-hover: rgba(255,255,255,.15);
+
+            --text: #f5f7fb;
+
+            --muted: #8e96a7;
+
+            --muted-dark: #626b7b;
+
+            --purple: #7c5cff;
+
+            --purple-light: #a78bfa;
+
+            --cyan: #25d9c2;
+
+            --danger: #ff7185;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+
+                    radial-gradient(
+                            circle at 10% 0%,
+                            rgba(124,92,255,.15),
+                            transparent 30rem
+                    ),
+
+                    radial-gradient(
+                            circle at 90% 10%,
+                            rgba(37,217,194,.07),
+                            transparent 25rem
+                    ),
+
+                    linear-gradient(
+                            135deg,
+                            var(--bg),
+                            var(--bg-soft)
+                    );
+
+            color: var(--text);
+
+            font-family:
+                    Inter,
+                    ui-sans-serif,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+
+            overflow-x: hidden;
+        }
+
+
+        /* subtle background grid */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            opacity: .55;
+
+            background-image:
+
+                    linear-gradient(
+                            rgba(255,255,255,.018) 1px,
+                            transparent 1px
+                    ),
+
+                    linear-gradient(
+                            90deg,
+                            rgba(255,255,255,.018) 1px,
+                            transparent 1px
+                    );
+
+            background-size: 45px 45px;
+
+            mask-image:
+                    linear-gradient(
+                            to bottom,
+                            black,
+                            transparent 80%
+                    );
+        }
+
+
+        button,
+        textarea {
+            font: inherit;
+        }
+
+
+        button {
+            cursor: pointer;
+        }
+
+
+        /*
+           HEADER
+       */
+
+        .header {
+
+            height: 64px;
+
+            padding:
+                    0 clamp(18px, 4vw, 48px);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 50;
+
+            border-bottom:
+                    1px solid var(--border);
+
+            background:
+                    rgba(7,9,14,.82);
+
+            backdrop-filter:
+                    blur(18px);
+        }
+
+
+        .brand {
+
+            font-size: 19px;
+
+            font-weight: 900;
+
+            letter-spacing: -.8px;
+
+            white-space: nowrap;
+        }
+
+
+        .brand span {
+            color: var(--purple-light);
+        }
+
+
+        .status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            white-space: nowrap;
+        }
+
+
+        .status-dot {
+
+            width: 7px;
+
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--cyan);
+
+            box-shadow:
+                    0 0 12px
+                    rgba(37,217,194,.75);
+        }
+
+
+        /*
+           MAIN
+        */
+
+        .main {
+
+            width:
+                    min(
+                            1120px,
+                            calc(100% - 32px)
+                    );
+
+            margin:
+                    0 auto;
+
+            padding:
+                    42px 0 32px;
+        }
+
+
+        /*
+           HERO
+         */
+
+        .hero {
+
+            text-align: center;
+
+            margin-bottom: 28px;
+        }
+
+
+        .badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            padding:
+                    6px 11px;
+
+            border:
+                    1px solid
+                    rgba(124,92,255,.25);
+
+            border-radius: 999px;
+
+            color: #bdb2ff;
+
+            background:
+                    rgba(124,92,255,.07);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            letter-spacing: .8px;
+
+            text-transform: uppercase;
+        }
+
+
+        .hero h1 {
+
+            max-width: 850px;
+
+            margin:
+                    14px auto 0;
+
+            font-size:
+                    clamp(
+                            36px,
+                            5vw,
+                            62px
+                    );
+
+            line-height: 1.04;
+
+            letter-spacing: -3px;
+        }
+
+
+        .hero h1 span {
+
+            background:
+                    linear-gradient(
+                            100deg,
+                            #ffffff,
+                            #a99aff 48%,
+                            #65ead9
+                    );
+
+            -webkit-background-clip: text;
+
+            background-clip: text;
+
+            color: transparent;
+        }
+
+
+        .hero p {
+
+            max-width: 600px;
+
+            margin:
+                    12px auto 0;
+
+            color: var(--muted);
+
+            font-size: 14px;
+
+            line-height: 1.6;
+        }
+
+
+        /*
+           WORKSPACE
+     */
+
+        .workspace {
+
+            display: grid;
+
+            grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr);
+
+            gap: 16px;
+
+            align-items: stretch;
+        }
+
+
+        /*
+           CARD
+       */
+
+        .card {
+
+            min-width: 0;
+
+            padding: 19px;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 17px;
+
+            background:
+                    var(--card);
+
+            backdrop-filter:
+                    blur(18px);
+
+            box-shadow:
+                    0 18px 55px
+                    rgba(0,0,0,.25);
+
+            transition:
+                    border-color .2s ease,
+                    transform .2s ease;
+        }
+
+
+        .card:hover {
+
+            border-color:
+                    var(--border-hover);
+
+            transform:
+                    translateY(-1px);
+        }
+
+
+        /*
+           CARD HEADER
+        */
+
+        .card-header {
+
+            min-height: 39px;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 13px;
+        }
+
+
+        .card-title {
+
+            font-size: 14px;
+
+            font-weight: 800;
+        }
+
+
+        .card-subtitle {
+
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+
+        .chip {
+
+            flex-shrink: 0;
+
+            padding:
+                    5px 8px;
+
+            border-radius: 7px;
+
+            color: #bdb3ff;
+
+            background:
+                    rgba(124,92,255,.08);
+
+            border:
+                    1px solid
+                    rgba(124,92,255,.17);
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            letter-spacing: .5px;
+        }
+
+
+        /*
+           TEXTAREA
+        */
+
+        textarea {
+
+            display: block;
+
+            width: 100%;
+
+            height: 225px;
+
+            min-height: 180px;
+
+            resize: vertical;
+
+            padding: 15px;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 11px;
+
+            outline: none;
+
+            background:
+                    var(--input);
+
+            color: var(--text);
+
+            font-size: 13px;
+
+            line-height: 1.65;
+
+            transition:
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+        }
+
+
+        textarea::placeholder {
+            color: #5d6676;
+        }
+
+
+        textarea:focus {
+
+            border-color:
+                    rgba(124,92,255,.6);
+
+            box-shadow:
+                    0 0 0 3px
+                    rgba(124,92,255,.08);
+        }
+
+
+        /*
+           INPUT FOOTER
+        */
+
+        .input-footer {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-top: 11px;
+        }
+
+
+        .hint {
+
+            color: var(--muted-dark);
+
+            font-size: 10px;
+        }
+
+
+        /*
+           BUTTON
+        */
+
+        .summarize-btn {
+
+            border: 0;
+
+            min-height: 42px;
+
+            padding:
+                    0 17px;
+
+            border-radius: 9px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #7655ff,
+                            #986bff
+                    );
+
+            color: white;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            white-space: nowrap;
+
+            box-shadow:
+                    0 8px 24px
+                    rgba(124,92,255,.22);
+
+            transition:
+                    transform .18s ease,
+                    box-shadow .18s ease,
+                    opacity .18s ease;
+        }
+
+
+        .summarize-btn:hover {
+
+            transform:
+                    translateY(-2px);
+
+            box-shadow:
+                    0 12px 30px
+                    rgba(124,92,255,.35);
+        }
+
+
+        .summarize-btn:active {
+
+            transform:
+                    translateY(0);
+        }
+
+
+        .summarize-btn:disabled {
+
+            opacity: .55;
+
+            cursor: wait;
+
+            transform: none;
+        }
+
+
+        /*
+           OUTPUT
+        */
+
+        .output {
+
+            height: 225px;
+
+            padding: 15px;
+
+            overflow-y: auto;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 11px;
+
+            background:
+                    radial-gradient(
+                            circle at 100% 0%,
+                            rgba(37,217,194,.055),
+                            transparent 16rem
+                    ),
+                    var(--input);
+
+            color: #dce1ea;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+
+            overflow-wrap: anywhere;
+
+            scrollbar-width: thin;
+        }
+
+
+        /*
+           EMPTY STATE
+        */
+
+        .empty-output {
+
+            height: 100%;
+
+            display: grid;
+
+            place-items: center;
+
+            text-align: center;
+
+            color: var(--muted-dark);
+        }
+
+
+        .empty-icon {
+
+            width: 46px;
+
+            height: 46px;
+
+            margin:
+                    0 auto 11px;
+
+            display: grid;
+
+            place-items: center;
+
+            border:
+                    1px solid
+                    rgba(124,92,255,.16);
+
+            border-radius: 13px;
+
+            color: #a899ff;
+
+            background:
+                    rgba(124,92,255,.07);
+
+            font-size: 20px;
+        }
+
+
+        .empty-title {
+
+            color: #9098a8;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .empty-description {
+
+            margin-top: 5px;
+
+            color: #596273;
+
+            font-size: 10px;
+        }
+
+
+        /*
+           RESULT
+        */
+
+        .result-label {
+
+            display: block;
+
+            margin-bottom: 10px;
+
+            color: #a99aff;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+
+        .result-text {
+
+            color: #e7ebf2;
+
+            font-size: 14px;
+
+            line-height: 1.75;
+        }
+
+
+        /*
+           SENTIMENT
+       */
+
+        .sentiment-box {
+
+            margin-top: 12px;
+
+            padding: 13px;
+
+            border:
+                    1px solid var(--border);
+
+            border-radius: 11px;
+
+            background:
+                    var(--input);
+        }
+
+
+        .sentiment-title {
+
+            margin-bottom: 8px;
+
+            color: #a99aff;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+
+        .sentiment-result {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            color: #dce1ea;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .sentiment-icon {
+
+            font-size: 16px;
+        }
+
+
+        /*
+           ERROR
+         */
+
+        .error {
+
+            padding: 13px;
+
+            border:
+                    1px solid
+                    rgba(255,113,133,.14);
+
+            border-radius: 9px;
+
+            background:
+                    rgba(255,113,133,.05);
+
+            color: #ff9daa;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+
+        /*
+           LOADING
+        */
+
+        .loading {
+
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            color: #9fa7b7;
+
+            font-size: 12px;
+        }
+
+
+        .spinner {
+
+            width: 17px;
+
+            height: 17px;
+
+            flex-shrink: 0;
+
+            border:
+                    2px solid
+                    rgba(255,255,255,.13);
+
+            border-top-color:
+                    #a28fff;
+
+            border-radius: 50%;
+
+            animation:
+                    spin .75s linear infinite;
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /*
+           FOOTER
+         */
+
+        .footer {
+
+            padding:
+                    0 18px 20px;
+
+            text-align: center;
+
+            color: #505969;
+
+            font-size: 10px;
+        }
+
+
+        .footer span {
+
+            color: #727b8c;
+
+            font-weight: 700;
+        }
+
+
+        /*
+           TABLET
+        */
+
+        @media (max-width: 850px) {
+
+            .main {
+
+                padding-top:
+                        34px;
+            }
+
+
+            .workspace {
+
+                grid-template-columns:
+                        1fr;
+            }
+
+
+            .card {
+
+                padding:
+                        18px;
+            }
+
+
+            textarea {
+
+                height:
+                        200px;
+            }
+
+
+            .output {
+
+                height:
+                        200px;
+            }
+
+        }
+
+
+        /*
+           MOBILE
+        */
+
+        @media (max-width: 600px) {
+
+            .header {
+
+                height:
+                        58px;
+
+                padding:
+                        0 15px;
+            }
+
+
+            .brand {
+
+                font-size:
+                        17px;
+            }
+
+
+            .status {
+
+                display:
+                        none;
+            }
+
+
+            .main {
+
+                width:
+                        calc(100% - 22px);
+
+                padding:
+                        27px 0 25px;
+            }
+
+
+            .hero {
+
+                margin-bottom:
+                        20px;
+            }
+
+
+            .badge {
+
+                padding:
+                        5px 9px;
+
+                font-size:
+                        8px;
+            }
+
+
+            .hero h1 {
+
+                margin-top:
+                        12px;
+
+                font-size:
+                        clamp(
+                                31px,
+                                10vw,
+                                42px
+                        );
+
+                line-height:
+                        1.06;
+
+                letter-spacing:
+                        -1.8px;
+            }
+
+
+            .hero p {
+
+                max-width:
+                        430px;
+
+                margin-top:
+                        10px;
+
+                font-size:
+                        12px;
+
+                line-height:
+                        1.55;
+            }
+
+
+            .workspace {
+
+                gap:
+                        12px;
+            }
+
+
+            .card {
+
+                padding:
+                        14px;
+
+                border-radius:
+                        14px;
+            }
+
+
+            .card-header {
+
+                margin-bottom:
+                        10px;
+            }
+
+
+            .card-title {
+
+                font-size:
+                        13px;
+            }
+
+
+            .card-subtitle {
+
+                font-size:
+                        10px;
+            }
+
+
+            .chip {
+
+                padding:
+                        4px 7px;
+
+                font-size:
+                        8px;
+            }
+
+
+            textarea {
+
+                height:
+                        175px;
+
+                min-height:
+                        150px;
+
+                padding:
+                        13px;
+
+                border-radius:
+                        10px;
+
+                font-size:
+                        12px;
+            }
+
+
+            .input-footer {
+
+                align-items:
+                        stretch;
+
+                flex-direction:
+                        column;
+
+                gap:
+                        8px;
+            }
+
+
+            .hint {
+
+                text-align:
+                        center;
+
+                order:
+                        2;
+            }
+
+
+            .summarize-btn {
+
+                width:
+                        100%;
+
+                min-height:
+                        44px;
+
+                font-size:
+                        12px;
+            }
+
+
+            .output {
+
+                height:
+                        175px;
+
+                min-height:
+                        150px;
+
+                padding:
+                        13px;
+
+                border-radius:
+                        10px;
+
+                font-size:
+                        12px;
+            }
+
+
+            .empty-icon {
+
+                width:
+                        40px;
+
+                height:
+                        40px;
+
+                font-size:
+                        17px;
+            }
+
+
+            .empty-title {
+
+                font-size:
+                        11px;
+            }
+
+
+            .empty-description {
+
+                font-size:
+                        9px;
+            }
+
+
+            .result-text {
+
+                font-size:
+                        12px;
+            }
+
+
+            .sentiment-box {
+
+                padding:
+                        11px;
+            }
+
+
+            .sentiment-result {
+
+                font-size:
+                        12px;
+            }
+
+
+            .footer {
+
+                padding-bottom:
+                        15px;
+            }
+
+        }
+
+
+        /*
+           SMALL PHONES
+           320px - 380px
+         */
+
+        @media (max-width: 380px) {
+
+            .main {
+
+                width:
+                        calc(100% - 16px);
+
+                padding-top:
+                        22px;
+            }
+
+
+            .hero h1 {
+
+                font-size:
+                        29px;
+
+                letter-spacing:
+                        -1.4px;
+            }
+
+
+            .hero p {
+
+                font-size:
+                        11px;
+            }
+
+
+            .card {
+
+                padding:
+                        12px;
+            }
+
+
+            textarea {
+
+                height:
+                        160px;
+            }
+
+
+            .output {
+
+                height:
+                        160px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!--
+         HEADER
+   -->
+
+    <header class="header">
+
+
+        <div class="brand">
+
+            Summarize<span>AI</span>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            GenAI Query Copilot
+
+        </div>
+
+
+    </header>
+
+
+
+    <!--
+         MAIN
+    -->
+
+    <main class="main">
+
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+
+            <div class="badge">
+
+                ✦ Powered by Spring AI
+
+            </div>
+
+
+            <h1>
+
+                Turn messy queries into
+
+                <span>
+                    clear insights.
+                </span>
+
+            </h1>
+
+
+            <p>
+
+                Paste a user query and let AI transform it
+                into a concise summary and understand
+                its overall sentiment.
+
+            </p>
+
+
+        </section>
+
+
+
+        <!--
+             WORKSPACE
+        -->
+
+        <section class="workspace">
+
+
+            <!--
+                 QUERY
+           -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+
+                    <div>
+
+                        <div class="card-title">
+
+                            User Query
+
+                        </div>
+
+
+                        <div class="card-subtitle">
+
+                            Paste the complete query below
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="chip">
+
+                        INPUT
+
+                    </div>
+
+
+                </div>
+
+
+                <textarea
+                        id="queryInput"
+                        placeholder="Example:
+
+Explain how vector embeddings work and why they are useful in GenAI applications..."
+                ></textarea>
+
+
+                <div class="input-footer">
+
+
+                    <div class="hint">
+
+                        Ctrl + Enter to analyze
+
+                    </div>
+
+
+                    <button
+                            id="summarizeButton"
+                            class="summarize-btn"
+                            type="button"
+                    >
+
+                        ✨ Analyze Query
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!--
+                 OUTPUT
+            -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+
+                    <div>
+
+                        <div class="card-title">
+
+                            AI Summary
+
+                        </div>
+
+
+                        <div class="card-subtitle">
+
+                            Your concise AI-generated result
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="chip">
+
+                        AI OUTPUT
+
+                    </div>
+
+
+                </div>
+
+
+                <div
+                        id="output"
+                        class="output"
+                >
+
+
+                    <div class="empty-output">
+
+
+                        <div>
+
+
+                            <div class="empty-icon">
+
+                                ✦
+
+                            </div>
+
+
+                            <div class="empty-title">
+
+                                Your AI summary will appear here.
+
+                            </div>
+
+
+                            <div class="empty-description">
+
+                                Paste a query and click
+                                "Analyze Query".
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!--
+                     SENTIMENT
+                 -->
+
+                <div
+                        id="sentimentBox"
+                        class="sentiment-box"
+                >
+
+                    <div class="sentiment-title">
+
+                        ✦ Sentiment Analysis
+
+                    </div>
+
+
+                    <div
+                            id="sentimentResult"
+                            class="sentiment-result"
+                    >
+
+                        <span class="sentiment-icon">—</span>
+
+                        <span>
+                            Sentiment will appear here.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!--
+         FOOTER
+     -->
+
+    <footer class="footer">
+
+        <span>SummarizeAI</span>
+
+        • Query Intelligence
+        • Spring Boot + Spring AI
+
+    </footer>
+
+
+</div>
+
+
+
+<script>
+
+
+    /*
+       ELEMENTS
+     */
+
+    const queryInput =
+        document.getElementById(
+            "queryInput"
+        );
+
+
+    const summarizeButton =
+        document.getElementById(
+            "summarizeButton"
+        );
+
+
+    const output =
+        document.getElementById(
+            "output"
+        );
+
+
+    const sentimentResult =
+        document.getElementById(
+            "sentimentResult"
+        );
+
+
+
+    /*
+       ANALYZE QUERY
+   */
+
+    async function summarizeQuery() {
+
+
+        const query =
+            queryInput.value.trim();
+
+
+        /*
+           EMPTY QUERY
+         */
+
+        if (!query) {
+
+            queryInput.focus();
+
+
+            output.innerHTML = `
+
+                <div class="error">
+
+                    Please enter a user query first.
+
+                </div>
+
+            `;
+
+
+            sentimentResult.innerHTML = `
+
+                <span class="sentiment-icon">—</span>
+
+                <span>
+                    Sentiment will appear here.
+                </span>
+
+            `;
+
+
+            return;
+        }
+
+
+
+        /*
+           BUTTON LOADING
+         */
+
+        summarizeButton.disabled =
+            true;
+
+
+        summarizeButton.innerHTML =
+            "⏳ Analyzing...";
+
+
+
+        /*
+           SUMMARY LOADING
+         */
+
+        output.innerHTML = `
+
+            <div class="loading">
+
+                <span class="spinner"></span>
+
+                AI is understanding your query...
+
+            </div>
+
+        `;
+
+
+
+        /*
+           SENTIMENT LOADING
+         */
+
+        sentimentResult.innerHTML = `
+
+            <span class="spinner"></span>
+
+            <span>
+                Analyzing sentiment...
+            </span>
+
+        `;
+
+
+
+        try {
+
+
+            /*
+               CALL BOTH APIs IN PARALLEL
+             */
+
+            const [
+                summaryResponse,
+                sentimentResponse
+            ] = await Promise.all([
+
+                fetch(
+                    "/api/summarize",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "text/plain"
+
+                        },
+
+                        body: query
+
+                    }
+                ),
+
+
+                fetch(
+                    "/api/sentiment",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "text/plain"
+
+                        },
+
+                        body: query
+
+                    }
+                )
+
+            ]);
+
+
+
+            /*
+               CHECK SUMMARY RESPONSE
+             */
+
+            if (!summaryResponse.ok) {
+
+                throw new Error(
+                    "Summary API returned HTTP "
+                    + summaryResponse.status
+                );
+
+            }
+
+
+
+            /*
+               CHECK SENTIMENT RESPONSE
+             */
+
+            if (!sentimentResponse.ok) {
+
+                throw new Error(
+                    "Sentiment API returned HTTP "
+                    + sentimentResponse.status
+                );
+
+            }
+
+
+
+            /*
+               GET SUMMARY
+             */
+
+            const summary =
+                await summaryResponse.text();
+
+
+
+            /*
+               GET SENTIMENT
+             */
+
+            const sentiment =
+                await sentimentResponse.text();
+
+
+
+            /*
+               SHOW SUMMARY
+             */
+
+            output.innerHTML = `
+
+                <span class="result-label">
+
+                    ✦ AI Generated Summary
+
+                </span>
+
+
+                <div class="result-text">
+
+                    ${escapeHtml(summary)}
+
+                </div>
+
+            `;
+
+
+
+            /*
+               SHOW SENTIMENT
+            */
+
+            showSentiment(sentiment);
+
+
+        } catch (error) {
+
+
+            /*
+               ERROR
+             */
+
+            output.innerHTML = `
+
+                <div class="error">
+
+                    <strong>
+                        Could not analyze the query.
+                    </strong>
+
+                    <br><br>
+
+                    Make sure your Spring Boot
+                    application is running and both
+                    <b>/api/summarize</b> and
+                    <b>/api/sentiment</b>
+                    endpoints are available.
+
+                    <br><br>
+
+                    ${escapeHtml(error.message)}
+
+                </div>
+
+            `;
+
+
+            sentimentResult.innerHTML = `
+
+                <span class="sentiment-icon">
+                    ⚠️
+                </span>
+
+                <span>
+                    Unable to analyze sentiment.
+                </span>
+
+            `;
+
+
+        } finally {
+
+
+            /*
+               RESET BUTTON
+             */
+
+            summarizeButton.disabled =
+                false;
+
+
+            summarizeButton.innerHTML =
+                "✨ Analyze Query";
+
+        }
+
+    }
+
+
+
+    /*
+       SHOW SENTIMENT
+    */
+
+    function showSentiment(sentiment) {
+
+
+        const value =
+            sentiment
+                .trim()
+                .toLowerCase();
+
+
+
+        /*
+           POSITIVE
+        */
+
+        if (value === "positive") {
+
+            sentimentResult.innerHTML = `
+
+                <span class="sentiment-icon">
+                    🟢
+                </span>
+
+                <span>
+                    Positive — User appears satisfied.
+                </span>
+
+            `;
+
+            return;
+        }
+
+
+
+        /*
+           NEGATIVE
+        */
+
+        if (value === "negative") {
+
+            sentimentResult.innerHTML = `
+
+                <span class="sentiment-icon">
+                    🔴
+                </span>
+
+                <span>
+                    Negative — User appears frustrated.
+                </span>
+
+            `;
+
+            return;
+        }
+
+
+
+        /*
+           NEUTRAL
+         */
+
+        sentimentResult.innerHTML = `
+
+            <span class="sentiment-icon">
+                🟡
+            </span>
+
+            <span>
+                Neutral — User appears neutral.
+            </span>
+
+        `;
+
+    }
+
+
+
+    /*
+       ESCAPE HTML
+    */
+
+    function escapeHtml(value) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            value;
+
+
+        return div.innerHTML;
+
+    }
+
+
+
+    /*
+       BUTTON
+    */
+
+    summarizeButton.addEventListener(
+        "click",
+        summarizeQuery
+    );
+
+
+
+    /*
+       CTRL + ENTER
+     */
+
+    queryInput.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.ctrlKey &&
+                event.key === "Enter"
+            ) {
+
+                event.preventDefault();
+
+                summarizeQuery();
+
+            }
+
+        }
+    );
+
+
+</script>
+
+
+</body>
+
+</html>
